@@ -1,0 +1,9 @@
+rm -rf build/ main
+echo build/./src/main.cpp.o
+build/./src/main.cpp.o
+mkdir -p build/./src/
+g++ -O3 -std=c++17 -I./include -B./src  -c src/main.cpp -o build/./src/main.cpp.o
+echo build/./src/NeuralNet.cpp.o
+build/./src/NeuralNet.cpp.o
+mkdir -p build/./src/
+g++ -O3 -std=c++17 -I./include -B./src  -c src/NeuralNet.cpp -o build/./src/NeuralNet.cpp.o
