@@ -56,7 +56,7 @@ double NeuralNet::err(void)
     double e = 0;
     for (size_t exp = 0; exp <= output_size; exp++)
     {
-        e += expected[exp] - layers[layer_count + 1][exp];
+        e += abs(expected[exp] - layers[layer_count + 1][exp]);
     }
     return e / 2;
 }
@@ -66,16 +66,17 @@ void NeuralNet::recal_alpha(void)
     double e = err();
     double rel_e = 2 * abs(e) / output_size;
     alpha = rel_e * (MAX_ALPHA - MIN_ALPHA) + MIN_ALPHA;
+    cout << "alpha: " << alpha << endl;
 }
 
 void NeuralNet::adj_weight(void)
 {
-    for (size_t exp = 0; exp <= output_size; exp++)
+    for (size_t exp = 0; exp < output_size; exp++)
     {
-        double t = expected[exp], y = layers[input_size + 1][exp];
-        delta[input_size][exp] = y * (1 - y) * (t - y);
+        double t = expected[exp], y = layers[layer_count + 1][exp];
+        delta[layer_count][exp] = y * (1 - y) * (t - y);
     }
-    for (size_t layer = input_size - 1; layer > 0; layer--)
+    for (int layer = layer_count - 1; layer >= 0; layer--)
     {
         for (size_t input = 0; input < layers[layer + 1].size(); input++)
         {
@@ -87,7 +88,7 @@ void NeuralNet::adj_weight(void)
             delta[layer][input] = layers[layer + 1][input] * (1 - layers[layer + 1][input]) * next_sum;
         }
     }
-    for (size_t layer = 0; layer < input_size + 1; layer++)
+    for (size_t layer = 0; layer < layer_count + 1; layer++)
     {
         for (size_t output = 0; output < weight[layer].size(); output++)
         {
@@ -99,17 +100,23 @@ void NeuralNet::adj_weight(void)
     }
 }
 
+vector<double> NeuralNet::_res(void)
+{
+    return layers[layer_count + 1];
+}
+
 void NeuralNet::train(void)
 {
     clear_neural_net();
     count_neural_net();
     recal_alpha();
-    adj_weight();
+    if (err() > MAX_ERR)
+        adj_weight();
 }
 
 size_t NeuralNet::apply(void)
 {
     clear_neural_net();
     count_neural_net();
-    return distance(layers[input_size + 1].begin(), max_element(layers[input_size + 1].begin(), layers[input_size + 1].end()));
+    return distance(layers[layer_count + 1].begin(), max_element(layers[layer_count + 1].begin(), layers[layer_count + 1].end()));
 }

@@ -3,6 +3,8 @@
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -11,7 +13,8 @@ using namespace std;
 #define NEURON_SIZE 7
 #define LAYER_COUNT 1
 #define MIN_ALPHA 0.1
-#define MAX_ALPHA 0.5
+#define MAX_ALPHA 0.3
+#define MAX_ERR 0.1
 
 class NeuralNet
 {
@@ -31,18 +34,37 @@ public:
         }
 
         delta = vector<vector<double>>(layer_count + 1);
-        layers[layer_count] = vector<double>(output_size);
+        delta[layer_count] = vector<double>(output_size);
         for (int layer = 0; layer < layer_count; layer++)
         {
-            layers[layer] = vector<double>(neuron_size);
+            delta[layer] = vector<double>(neuron_size);
         }
+
+        random_device device;
+        mt19937 generator(device());
+        uniform_real_distribution<float> distr(0, 0.3);
 
         weight = vector<vector<vector<double>>>(layer_count + 1);
         weight[0] = vector<vector<double>>(neuron_size, vector<double>(input_size * input_size));
+        for (size_t x = 0; x < neuron_size; x++) {
+            for (size_t y = 0; y < input_size * input_size; y++) {
+                weight[0][x][y] = distr(generator);
+            }
+        }
         weight[layer_count] = vector<vector<double>>(output_size, vector<double>(neuron_size));
+        for (size_t x = 0; x < output_size; x++) {
+            for (size_t y = 0; y < neuron_size; y++) {
+                weight[layer_count][x][y] = distr(generator);
+            }
+        }
         for (int w = 0; w < layer_count - 1; w++)
         {
             weight[w + 1] = vector<vector<double>>(neuron_size, vector<double>(neuron_size));
+            for (size_t x = 0; x < neuron_size; x++) {
+                for (size_t y = 0; y < neuron_size; y++) {
+                    weight[w + 1][x][y] = distr(generator);
+                }
+            }
         }
     }
 
@@ -50,6 +72,7 @@ public:
     void set_expected(vector<double> input);
     void train(void);
     double err(void);
+    vector<double> _res(void);
     size_t apply(void);
 
 private:
