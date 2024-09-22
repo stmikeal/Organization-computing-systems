@@ -66,7 +66,6 @@ void NeuralNet::recal_alpha(void)
     double e = err();
     double rel_e = 2 * abs(e) / output_size;
     alpha = rel_e * (MAX_ALPHA - MIN_ALPHA) + MIN_ALPHA;
-    cout << "alpha: " << alpha << endl;
 }
 
 void NeuralNet::adj_weight(void)

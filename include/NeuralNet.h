@@ -10,7 +10,7 @@ using namespace std;
 
 #define OUTPUT_SIZE 3
 #define INPUT_SIZE 7
-#define NEURON_SIZE 7
+#define NEURON_SIZE 14
 #define LAYER_COUNT 1
 #define MIN_ALPHA 0.1
 #define MAX_ALPHA 0.3
