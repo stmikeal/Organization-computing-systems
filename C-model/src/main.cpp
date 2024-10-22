@@ -3,6 +3,8 @@
 #include <fstream>
 #include <filesystem>
 #include <iostream>
+#include <time.h>
+#pragma comment( lib, "Pdh.lib" )
 
 using namespace std::filesystem;
 
@@ -19,6 +21,7 @@ int main(int argc, char *argv[])
     double count_barrier = 0;
     double mean_err;
     int epoch;
+    clock_t start = clock();
     for (epoch = 0; epoch < 50; epoch++)
     {
         mean_err = 0;
@@ -46,11 +49,12 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    cout << "Train stopped on " << epoch << " epoch" << endl;
-    cout << "Mear err on train is " << mean_err << endl;
+    cout << "Train stopped on " << epoch << " epoch, time: " << (double)(clock() - start)/CLOCKS_PER_SEC << endl;
+    cout << "Mean err on train is " << mean_err << endl;
 
     mean_err = 0;
     int mean_count = 0;
+    start = clock();
     for (auto &val_path : directory_iterator("./input/validate"))
     {
         ifstream fin(val_path.path());
@@ -77,12 +81,19 @@ int main(int argc, char *argv[])
                 cout << "Square" << endl;
             else
                 cout << "Triangle" << endl;
+        } else {
+            cout << "Success on image " << val_path.path() << endl;
         }
+        cout << "Circle accuracy: " << neuralNet._res()[0] << endl;;
+        cout << "Square accuracy: " << neuralNet._res()[1] << endl;;
+        cout << "Triangle accuracy: " << neuralNet._res()[2] << endl;;
         mean_err += neuralNet.err();
         mean_count++;
     }
+
     mean_err /= mean_count;
-    cout << "Mear err on validation is " << mean_err << endl;
+    cout << "Validation time: " << (double)(clock() - start)/CLOCKS_PER_SEC << endl;
+    cout << "Mean err on validation is " << mean_err << endl;
 
     return 0;
 }
