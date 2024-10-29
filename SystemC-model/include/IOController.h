@@ -5,15 +5,15 @@
 
 SC_MODULE(IOController)
 {
-  sc_port<sc_signal_in_if<bool>> clk_i;
-  sc_port<sc_signal_out_if<size_t>> addr_o;
-  sc_port<sc_signal_inout_if<float>> data_io;
-  sc_port<sc_signal_out_if<bool>> wr_o;
-  sc_port<sc_signal_out_if<bool>> rd_o;
-  sc_port<sc_signal_in_if<bool>> ioc_wr_i;
-  sc_port<sc_signal_in_if<bool>> ioc_rd_i;
-  sc_port<sc_signal_in_if<bool>> ioc_res_addr_i;
-  sc_port<sc_signal_out_if<bool>> ioc_busy_o;
+  sc_in<bool> clk_i;
+  sc_out<size_t> addr_o;
+  sc_inout<float> data_io;
+  sc_out<bool> wr_o;
+  sc_out<bool> rd_o;
+  sc_in<bool> ioc_wr_i;
+  sc_in<bool> ioc_rd_i;
+  sc_in<size_t> ioc_res_addr_i;
+  sc_out<bool> ioc_busy_o;
 
   SC_HAS_PROCESS(IOController);
 

@@ -6,64 +6,93 @@ NeuralCore::NeuralCore() : NeuralCore("nc") {};
 NeuralCore::NeuralCore(sc_module_name nm)
     : sc_module(nm)
 {
-    SC_METHOD(load_data);
-    sensitive << load_i->posedge_event();
-    dont_initialize();
+    // printf("NeuralCore constructor\n");
 
-    SC_METHOD(process);
-    sensitive << process_event;
-    dont_initialize();
+    state = LOAD_DATA;
+    SC_THREAD(load_data);
+    sensitive << clk_i.pos();
 
-    SC_METHOD(write_result);
-    sensitive << write_result_event;
-    dont_initialize();
+    SC_THREAD(process);
+    sensitive << clk_i.pos();
+
+    SC_THREAD(write_result);
+    sensitive << clk_i.pos();
 }
 
 void NeuralCore::load_data()
 {
-    busy_o->write(1);
-    size_t size = data_cnt_i->read();
-    size_t w_addr = w_start_addr_i->read();
-    size_t v_addr = v_start_addr_i->read();
-    for (size_t i = 0; i < size; ++i)
+    while (1)
     {
-        addr_o->write(w_addr + i);
-        rd_o->write(1);
-        wait(clk_i->posedge_event());
-        rd_o->write(0);
-        weight_queue.push(data_io->read());
-        addr_o->write(v_addr + i);
-        rd_o->write(1);
-        wait(clk_i->posedge_event());
-        rd_o->write(0);
-        value_queue.push(data_io->read());
+        rd_o.write(0);
+        // printf("NeuralCore::load_data\n");
+        while (state != LOAD_DATA || !load_i.read())
+            wait();
+        busy_o->write(1);
+        size_t size = data_cnt_i->read();
+        size_t w_addr = w_start_addr_i->read();
+        size_t v_addr = v_start_addr_i->read();
+        for (size_t i = 0; i < size; ++i)
+        {
+            addr_o->write(w_addr + i);
+            rd_o->write(1);
+            wait();
+            rd_o->write(0);
+            wait();
+            wait(SC_ZERO_TIME);
+            weight_queue.push(data_io->read());
+            addr_o->write(v_addr + i);
+            rd_o->write(1);
+            wait();
+            rd_o->write(0);
+            wait();
+            wait(SC_ZERO_TIME);
+            value_queue.push(data_io->read());
+        }
+        state = PROCESS;
     }
-    process_event.notify();
 }
 
 void NeuralCore::process()
 {
-    accumulator = 0;
-    while (!weight_queue.empty() && !value_queue.empty())
+    while (1)
     {
-        for (size_t i = 0; i < neural_core_mul_size; ++i)
+        // printf("NeuralCore::process\n");
+        while (state != PROCESS)
+            wait();
+        accumulator = 0;
+        while (!weight_queue.empty() && !value_queue.empty())
         {
-            if (weight_queue.empty() || value_queue.empty())
-                break;
-            accumulator += weight_queue.front() * value_queue.front();
-            weight_queue.pop();
-            value_queue.pop();
+            for (size_t i = 0; i < neural_core_mul_size; ++i)
+            {
+                if (weight_queue.empty() || value_queue.empty())
+                    break;
+                // printf("%f ", value_queue.front());
+                accumulator += weight_queue.front() * value_queue.front();
+                weight_queue.pop();
+                value_queue.pop();
+            }
+            // printf("\n");
+            wait();
         }
-        wait(clk_i->posedge_event());
+        state = RESULT;
     }
-    process_event.notify();
 }
 
 void NeuralCore::write_result()
 {
-    data_io->write(accumulator);
-    rd_o->write(1);
-    wait(clk_i->posedge_event());
-    rd_o->write(0);
-    busy_o->write(0);
+    while (1)
+    {
+        // printf("NeuralCore::write_result\n");
+        while (state != RESULT)
+            wait();
+        data_io->write(accumulator);
+        //printf("accumulator %f\n", accumulator);
+        wr_o->write(1);
+        wait();
+        wr_o->write(0);
+        wait();
+        wait(SC_ZERO_TIME);
+        busy_o->write(0);
+        state = LOAD_DATA;
+    }
 }

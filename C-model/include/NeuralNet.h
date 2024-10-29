@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -69,6 +71,7 @@ public:
     }
 
     void set_input(vector<vector<double>> input);
+    void set_model(ifstream &fin);
     void set_expected(vector<double> input);
     void train(void);
     double err(void);

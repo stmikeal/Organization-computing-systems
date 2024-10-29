@@ -2,11 +2,12 @@
 
 Processor::Processor(sc_module_name nm)
     : sc_module(nm),
+    clk_i("processor_clk"),
     activation("act"),
     controlUnit("cu"),
     ioController("ioc"),
     localMem("lm"),
-    neuralCore(slave_count),
+    neuralCore("nc", slave_count),
     addr(local_mem_slave_count),
     data(local_mem_slave_count),
     wr(local_mem_slave_count),
@@ -17,6 +18,7 @@ Processor::Processor(sc_module_name nm)
     load(slave_count),
     busy(slave_count)
 {
+    // printf("Processor constructor\n");
     for (size_t i = 0; i < slave_count; ++i) {
         neuralCore[i].clk_i(clk_i);
     }
@@ -34,7 +36,7 @@ Processor::Processor(sc_module_name nm)
     localMem.data_io(data[0]);
     ioController.wr_o(wr[0]);
     controlUnit.wr_o(wr[0]);
-    localMem.wr_i(rd[0]);
+    localMem.wr_i(wr[0]);
     ioController.rd_o(rd[0]);
     controlUnit.rd_o(rd[0]);
     localMem.rd_i(rd[0]);
@@ -80,5 +82,6 @@ Processor::Processor(sc_module_name nm)
 
 void Processor::start()
 {
+    // printf("Starting\n");
     controlUnit.start();
 }

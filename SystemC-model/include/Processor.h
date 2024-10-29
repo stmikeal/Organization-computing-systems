@@ -10,13 +10,13 @@
 
 SC_MODULE(Processor)
 {
-    sc_port<sc_signal_in_if<bool>> clk_i;
+    sc_in<bool> clk_i;
 
     Activation activation;
     ControlUnit controlUnit;
     IOController ioController;
     LocalMem localMem;
-    std::vector<NeuralCore> neuralCore;
+    sc_vector<NeuralCore> neuralCore;
 
     SC_HAS_PROCESS(Processor);
 
@@ -30,7 +30,7 @@ SC_MODULE(Processor)
 
     sc_signal<bool> ioc_wr;
     sc_signal<bool> ioc_rd;
-    sc_signal<bool> ioc_res_addr;
+    sc_signal<size_t> ioc_res_addr;
     sc_signal<bool> ioc_busy;
 
     std::vector<sc_signal<size_t>> addr;
@@ -43,10 +43,6 @@ SC_MODULE(Processor)
     std::vector<sc_signal<size_t>> v_start_addr;
     std::vector<sc_signal<bool>> load;
     std::vector<sc_signal<bool>> busy;
-
-private:
-    float mem[local_mem_size];
-    float prepared_write_queue[local_mem_slave_count];
 };
 
 #endif

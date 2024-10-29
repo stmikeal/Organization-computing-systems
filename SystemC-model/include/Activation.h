@@ -5,9 +5,9 @@
 
 SC_MODULE(Activation)
 {
-    sc_port<sc_signal_in_if<bool>> clk_i;
-    sc_port<sc_signal_inout_if<float>> act_data_io;
-    sc_port<sc_signal_in_if<bool>> act_start_i;
+    sc_in<bool> clk_i;
+    sc_inout<float> act_data_io;
+    sc_in<bool> act_start_i;
 
     SC_HAS_PROCESS(Activation);
 

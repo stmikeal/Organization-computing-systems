@@ -20,6 +20,23 @@ void NeuralNet::set_input(vector<vector<double>> input)
     }
 }
 
+void NeuralNet::set_model(ifstream &fin)
+{
+    float cell; 
+    fin >> cell >> cell >> cell >> cell;
+    for (size_t layer = 0; layer < layer_count + 1; layer++)
+    {
+        for (size_t output = 0; output < weight[layer].size(); output++)
+        {
+            for (size_t input = 0; input < weight[layer][output].size(); input++)
+            {
+                fin >> cell;
+                weight[layer][output][input] = cell;
+            }
+        }
+    }
+}
+
 void NeuralNet::_print_w()
 {
     for (size_t layer = 0; layer < layer_count + 1; layer++)
@@ -54,7 +71,9 @@ void NeuralNet::count_neural_net(void)
             {
                 layers[layer + 1][neuron] += layers[layer][input] * weight[layer][neuron][input];
             }
+            printf("layer %d neuron %d value %f\n", layer, neuron, layers[layer + 1][neuron]);
             layers[layer + 1][neuron] = activation(layers[layer + 1][neuron]);
+            //printf("layer %d neuron %d value %f\n", layer, neuron, layers[layer + 1][neuron]);
         }
     }
 }

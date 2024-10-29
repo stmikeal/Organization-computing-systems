@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     double mean_err;
     int epoch;
     clock_t start = clock();
-    for (epoch = 0; epoch < 50; epoch++)
+    /*for (epoch = 0; epoch < 50; epoch++)
     {
         mean_err = 0;
         int mean_count = 0;
@@ -50,7 +50,10 @@ int main(int argc, char *argv[])
         }
     }
     cout << "Train stopped on " << epoch << " epoch, time: " << (double)(clock() - start)/CLOCKS_PER_SEC << endl;
-    cout << "Mean err on train is " << mean_err << endl;
+    cout << "Mean err on train is " << mean_err << endl;*/
+
+    ifstream fin("input/mem.txt");
+    neuralNet.set_model(fin);
 
     mean_err = 0;
     int mean_count = 0;
@@ -95,7 +98,7 @@ int main(int argc, char *argv[])
     cout << "Validation time: " << (double)(clock() - start)/CLOCKS_PER_SEC << endl;
     cout << "Mean err on validation is " << mean_err << endl;
 
-    neuralNet._print_w();
+    //neuralNet._print_w();
 
     return 0;
 }

@@ -1,16 +1,27 @@
 #include "Activation.h"
 
 Activation::Activation(sc_module_name nm)
-    : sc_module(nm)
+    : sc_module(nm),
+      clk_i("activation_clk"),
+      act_data_io("activation_data"),
+      act_start_i("activation_start")
 {
-    SC_METHOD(process);
-    sensitive << act_start_i->posedge_event();
-    dont_initialize();
+    // printf("Activation constructor\n");
+    SC_THREAD(process);
+    sensitive << clk_i.pos();
 }
 
 void Activation::process()
 {
-    float value = act_data_io->read();
-    wait(clk_i->posedge_event());
-    act_data_io->write(1.0/(exp(-value) + 1));
+    while (1)
+    {
+        // printf("Activation::process\n");
+        if (act_start_i.read())
+        {
+            float value = act_data_io->read();
+            wait();
+            act_data_io->write(1.0 / (exp(-value) + 1));
+        }
+        wait();
+    }
 }

@@ -6,17 +6,17 @@
 
 SC_MODULE(NeuralCore)
 {
-    sc_port<sc_signal_in_if<bool>> clk_i;
-    sc_port<sc_signal_in_if<size_t>> data_cnt_i;
-    sc_port<sc_signal_in_if<size_t>> w_start_addr_i;
-    sc_port<sc_signal_in_if<size_t>> v_start_addr_i;
-    sc_port<sc_signal_in_if<bool>> load_i;
-    sc_port<sc_signal_out_if<bool>> busy_o;
+    sc_in<bool> clk_i;
+    sc_in<size_t> data_cnt_i;
+    sc_in<size_t> w_start_addr_i;
+    sc_in<size_t> v_start_addr_i;
+    sc_in<bool> load_i;
+    sc_out<bool> busy_o;
 
-    sc_port<sc_signal_out_if<size_t>> addr_o;
-    sc_port<sc_signal_inout_if<float>> data_io;
-    sc_port<sc_signal_out_if<bool>> wr_o;
-    sc_port<sc_signal_out_if<bool>> rd_o;
+    sc_out<size_t> addr_o;
+    sc_inout<float> data_io;
+    sc_out<bool> wr_o;
+    sc_out<bool> rd_o;
 
     sc_event process_event;
     sc_event write_result_event;
@@ -27,13 +27,19 @@ SC_MODULE(NeuralCore)
     SC_HAS_PROCESS(NeuralCore);
     NeuralCore();
     NeuralCore(sc_module_name nm);
-    ~NeuralCore() {};
+    ~NeuralCore(){};
 
     void process();
     void write_result();
     void load_data();
 
 private:
+    enum
+    {
+        LOAD_DATA = 0,
+        PROCESS = 1,
+        RESULT = 2,
+    } state;
     float accumulator;
 };
 

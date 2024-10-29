@@ -8,19 +8,19 @@
 
 SC_MODULE(ControlUnit)
 {
-  sc_port<sc_signal_in_if<bool>> clk_i;
-  sc_port<sc_signal_out_if<size_t>> addr_o;
-  sc_port<sc_signal_inout_if<float>> data_io;
-  sc_port<sc_signal_out_if<bool>> wr_o;
-  sc_port<sc_signal_out_if<bool>> rd_o;
+  sc_in<bool> clk_i;
+  sc_out<size_t> addr_o;
+  sc_inout<float> data_io;
+  sc_out<bool> wr_o;
+  sc_out<bool> rd_o;
 
-  sc_port<sc_signal_inout_if<float>> act_data_io;
-  sc_port<sc_signal_out_if<bool>> act_start_o;
+  sc_inout<float> act_data_io;
+  sc_out<bool> act_start_o;
 
-  sc_port<sc_signal_out_if<bool>> ioc_wr_o;
-  sc_port<sc_signal_out_if<bool>> ioc_rd_o;
-  sc_port<sc_signal_out_if<bool>> ioc_res_addr_o;
-  sc_port<sc_signal_in_if<bool>> ioc_busy_i;
+  sc_out<bool> ioc_wr_o;
+  sc_out<bool> ioc_rd_o;
+  sc_out<size_t> ioc_res_addr_o;
+  sc_in<bool> ioc_busy_i;
 
   sc_port<sc_signal_in_if<bool>, slave_count> core_wr_i;
   sc_port<sc_signal_in_if<float>, slave_count> core_data_io;
@@ -54,8 +54,15 @@ private:
 
   inline void process_mem_mapped();
 
+  enum {
+    START = 0,
+    LOAD_DATA = 1,
+    PROCESS = 2,
+    RESULT = 3,
+  } state;
+
   std::queue<std::pair<size_t, float>> mem_mapped;
-  std::queue<size_t> device_busy;
+  std::vector<bool> device_busy;
   size_t weight_local_addr;
   size_t value_local_addr;
   size_t local_layer;
