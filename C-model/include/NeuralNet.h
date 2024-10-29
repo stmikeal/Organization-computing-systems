@@ -74,6 +74,7 @@ public:
     double err(void);
     vector<double> _res(void);
     size_t apply(void);
+    void _print_w();
 
 private:
     double activation(double x);

@@ -9,7 +9,7 @@ SYSTEMC_LIB_DIR  ?= $(SYSTEMC_HOME)/lib-linux64
 CC=g++
 INCLUDE_FLAGS = -I$(INCLUDE_PATH) -I$(SYSTEMC_INC_DIR)
 LIB_FLAGS = -L$(SYSTEMC_LIB_DIR) -lsystemc -Wl,-rpath=$(SYSTEMC_LIB_DIR)
-CFLAGS = -O3 -std=c++17
+CFLAGS = -O3 -std=c++11
 
 SRCS:=$(shell find $(SOURCE_PATH) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 OBJS := $(SRCS:%=$(BUILD_PATH)/%.o)

@@ -20,6 +20,21 @@ void NeuralNet::set_input(vector<vector<double>> input)
     }
 }
 
+void NeuralNet::_print_w()
+{
+    for (size_t layer = 0; layer < layer_count + 1; layer++)
+    {
+        for (size_t output = 0; output < weight[layer].size(); output++)
+        {
+            for (size_t input = 0; input < weight[layer][output].size(); input++)
+            {
+                cout << weight[layer][output][input] << " ";
+            }
+            cout << endl;
+        }
+    }
+}
+
 void NeuralNet::set_expected(vector<double> input)
 {
     if (input.size() != output_size)

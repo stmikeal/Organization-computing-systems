@@ -56,6 +56,10 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "filesystem": "cpp",
-        "systemc": "cpp"
+        "systemc": "cpp",
+        "strstream": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp",
+        "queue": "cpp"
     }
 }

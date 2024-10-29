@@ -95,5 +95,7 @@ int main(int argc, char *argv[])
     cout << "Validation time: " << (double)(clock() - start)/CLOCKS_PER_SEC << endl;
     cout << "Mean err on validation is " << mean_err << endl;
 
+    neuralNet._print_w();
+
     return 0;
 }
